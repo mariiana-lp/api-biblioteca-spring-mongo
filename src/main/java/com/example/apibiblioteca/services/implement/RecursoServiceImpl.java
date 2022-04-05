@@ -3,6 +3,8 @@ package com.example.apibiblioteca.services.implement;
 import com.example.apibiblioteca.domain.Recurso;
 import com.example.apibiblioteca.repository.IRecursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -34,5 +36,16 @@ public class RecursoServiceImpl implements IRecursoService{
     public Flux<Recurso> findAll() {
         return this.iRecursoRepository.findAll();
     }
+
+    @Override
+    public Mono<Recurso> devolver(String id, Recurso recurso){
+        return this.iRecursoRepository.findById(id)
+                .flatMap(recurso1 -> {
+                    recurso1.setId(id);
+                    return save(recurso);
+                })
+                .switchIfEmpty(Mono.empty());
+    }
+
 
 }

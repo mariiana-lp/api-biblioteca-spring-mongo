@@ -38,17 +38,40 @@ public class RecursoResource {
         return this.iRecursoService.findById(id);
     }
 
+    @GetMapping("/estado/{id}")
+    public ResponseEntity<Mono<Recurso>> findStatusById(@PathVariable("id") String id) {
+        Mono<Recurso> resource = iRecursoService.findById(id);
+        HttpStatus status = resource != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return  new ResponseEntity<>(resource, status);
+    }
+
     @GetMapping("/prestado/{id}")
     public ResponseEntity<Mono<String>> prestado(@PathVariable("id") String id) {
-            Boolean isPrestado = iRecursoService.findById(id)
-                    .map(Recurso::isPrestado)
-                    .block();
+            try {
+                Boolean isPrestado = iRecursoService.findById(id)
+                        .map(Recurso::getPrestado)
+                        .block();
 
-            if(!isPrestado) {
-                return new ResponseEntity<>(
-                        Mono.just("No se encuentra disponible"),
-                        HttpStatus.FORBIDDEN);
+                if(!isPrestado) {
+                    return new ResponseEntity<>(
+                            Mono.just("NO DISPONIBLe"),
+                            HttpStatus.FORBIDDEN);
+                }
+                return new ResponseEntity<>(Mono.just("DISPONIBLE"), HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return new ResponseEntity<>(Mono.just("Si esta disponible"), HttpStatus.OK);
     }
+
+    @PutMapping("/update/{id}")
+    private Mono<ResponseEntity<Recurso>> devolver (@PathVariable("id") String id, @RequestBody Recurso recurso){
+        return this.iRecursoService.devolver(id, recurso)
+                .flatMap(productoDTOReactivo1 -> Mono.just(ResponseEntity.ok(recurso)))
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+    }
+
+
+
 }
+
+

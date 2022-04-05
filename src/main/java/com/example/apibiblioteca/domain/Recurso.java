@@ -11,7 +11,7 @@ public class Recurso {
     @Id
     private String id = UUID.randomUUID().toString().substring(0,10);
     private String titulo;
-    private boolean prestado;
+    private Boolean prestado;
     private LocalDate fechaPrestamos;
     private String tipo;
     private String tematica;
@@ -41,6 +41,8 @@ public class Recurso {
         return prestado;
     }
 
+    public Boolean getPrestado(){return prestado;}
+
     public LocalDate getFechaPrestamos() {
         return fechaPrestamos;
     }
@@ -51,5 +53,29 @@ public class Recurso {
 
     public String getTematica() {
         return tematica;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setPrestado(Boolean prestado) {
+        this.prestado = prestado;
+    }
+
+    public void setFechaPrestamos(LocalDate fechaPrestamos) {
+        this.fechaPrestamos = fechaPrestamos;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setTematica(String tematica) {
+        this.tematica = tematica;
     }
 }
