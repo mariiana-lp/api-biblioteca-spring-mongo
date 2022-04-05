@@ -38,4 +38,17 @@ public class RecursoResource {
         return this.iRecursoService.findById(id);
     }
 
+    @GetMapping("/prestado/{id}")
+    public ResponseEntity<Mono<String>> prestado(@PathVariable("id") String id) {
+            Boolean isPrestado = iRecursoService.findById(id)
+                    .map(Recurso::isPrestado)
+                    .block();
+
+            if(!isPrestado) {
+                return new ResponseEntity<>(
+                        Mono.just("No se encuentra disponible"),
+                        HttpStatus.FORBIDDEN);
+            }
+            return new ResponseEntity<>(Mono.just("Si esta disponible"), HttpStatus.OK);
+    }
 }
